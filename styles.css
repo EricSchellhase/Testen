@@ -7,3 +7,14 @@ body {
     height: 100vh;
     width: 100%;
 }
+
+/* Layer-Legende (Leaflet-Control) oben rechts: begrenzte Höhe + Scroll */
+.leaflet-control-layers {
+    max-height: 40vh;
+    overflow: auto;
+    box-sizing: border-box;
+}
+/* Optional: kleine optische Anpassung */
+.leaflet-control-layers .leaflet-control-layers-list {
+    padding: 6px 10px;
+}
