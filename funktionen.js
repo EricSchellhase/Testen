@@ -28,3 +28,68 @@ const baseMaps = {
 
 // Legende / Layer-Selector oben rechts
 L.control.layers(baseMaps, null, { position: 'topright' }).addTo(map);
+
+// Funktion: überprüft das Unterverzeichnis "Layer/" auf .geojson-Dateien und fügt sie der Karte hinzu
+async function loadGeoJSONFromLayerFolder(folder = 'Layer/') {
+    // Versucht, das Verzeichnis abzurufen (vorausgesetzt der Server liefert ein Directory-Listing)
+    try {
+        const res = await fetch(folder, { method: 'GET' });
+        if (!res.ok) {
+            console.warn(`Kein Directory-Listing verfügbar für ${folder} (Status ${res.status})`);
+            return;
+        }
+        const text = await res.text();
+
+        // Sucht nach hrefs oder direkten Dateinamen mit Endung .geojson
+        const urls = new Set();
+        // 1) HTML links
+        const hrefRegex = /href=["']([^"']+\.geojson)["']/gi;
+        let m;
+        while ((m = hrefRegex.exec(text)) !== null) urls.add(new URL(m[1], location.href + folder).href);
+
+        // 2) Plaintext fallback: Dateinamen im Listing
+        const nameRegex = /([^\s"'>]+\.geojson)/gi;
+        while ((m = nameRegex.exec(text)) !== null) urls.add(new URL(m[1], location.href + folder).href);
+
+        if (urls.size === 0) {
+            console.info(`Keine .geojson-Dateien im Ordner ${folder} gefunden oder Directory-Listing blockiert.`);
+            return;
+        }
+
+        // Für jede gefundene Datei: laden und als Layer zur Karte hinzufügen
+        for (const url of urls) {
+            try {
+                console.info(`Lade GeoJSON: ${url}`);
+                const gjRes = await fetch(url);
+                if (!gjRes.ok) {
+                    console.warn(`Fehler beim Laden von ${url}: ${gjRes.status}`);
+                    continue;
+                }
+                const geojson = await gjRes.json();
+                const layer = L.geoJSON(geojson, {
+                    onEachFeature: function (feature, layer) {
+                        // Einfacher Popup: alle Eigenschaften anzeigen, falls vorhanden
+                        if (feature && feature.properties) {
+                            layer.bindPopup('<pre>' + JSON.stringify(feature.properties, null, 2) + '</pre>');
+                        }
+                    },
+                    style: function () {
+                        return { color: '#ff7800', weight: 2 };
+                    },
+                    pointToLayer: function (feature, latlng) {
+                        return L.circleMarker(latlng, { radius: 6, fillColor: '#ff7800', color: '#000', weight: 1, fillOpacity: 0.8 });
+                    }
+                }).addTo(map);
+                // Optional: zur Kontrolle in der Konsole ausgeben
+                console.info(`GeoJSON hinzugefügt: ${url}`);
+            } catch (err) {
+                console.error(`Fehler beim Verarbeiten von ${url}:`, err);
+            }
+        }
+    } catch (err) {
+        console.error(`Fehler beim Zugriff auf ${folder}:`, err);
+    }
+}
+
+// Aufruf nach der Kartenerstellung
+loadGeoJSONFromLayerFolder();
