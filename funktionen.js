@@ -11,10 +11,13 @@ const cycleLayer = L.tileLayer('http://a.tile.thunderforest.com/cycle/{z}/{x}/{y
     attribution: '&copy; OpenCycleMap &copy; OpenStreetMap contributors'
 });
 
-// OpenRailwayMap
-const railwayLayer = L.tileLayer('https://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png', {
+// OpenRailwayMap tiles (Overlay)
+const railwayTiles = L.tileLayer('https://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenRailwayMap &copy; OpenStreetMap contributors'
 });
+
+// railwayLayer als Gruppe: OpenStreetMap im Hintergrund + Railway-Overlay oben drauf
+const railwayLayer = L.layerGroup([osmLayer, railwayTiles]);
 
 // Basemap-Objekt für die Legende
 const baseMaps = {
