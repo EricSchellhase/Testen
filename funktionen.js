@@ -7,7 +7,7 @@ const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png
 }).addTo(map);
 
 // OpenCycleMap
-const cycleLayer = L.tileLayer('https://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png', {
+const cycleLayer = L.tileLayer('http://a.tile.thunderforest.com/cycle/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenCycleMap &copy; OpenStreetMap contributors'
 });
 
