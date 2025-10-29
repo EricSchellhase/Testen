@@ -91,5 +91,23 @@ async function loadGeoJSONFromLayerFolder(folder = 'Layer/') {
     }
 }
 
+// Tab Funktionalität
+document.querySelectorAll('.tab-button').forEach(button => {
+    button.addEventListener('click', () => {
+        // Entferne active Klasse von allen Tabs
+        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+        
+        // Setze active Klasse für ausgewählten Tab
+        button.classList.add('active');
+        document.getElementById(button.dataset.tab).classList.add('active');
+        
+        // Aktualisiere Karte wenn der Map-Tab aktiv ist
+        if (button.dataset.tab === 'map') {
+            map.invalidateSize();
+        }
+    });
+});
+
 // Aufruf nach der Kartenerstellung
 loadGeoJSONFromLayerFolder();

@@ -9,7 +9,24 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
-    <div id="map"></div>
+    <div class="tab-container">
+        <div class="tab-header">
+            <button class="tab-button active" data-tab="map">Karte</button>
+            <button class="tab-button" data-tab="info">Info</button>
+            <button class="tab-button" data-tab="data">Daten</button>
+        </div>
+        <div class="tab-content">
+            <div class="tab-pane active" id="map"></div>
+            <div class="tab-pane" id="info">
+                <h2>Informationen</h2>
+                <p>Hier können weitere Informationen stehen.</p>
+            </div>
+            <div class="tab-pane" id="data">
+                <h2>Daten</h2>
+                <p>Hier können Daten angezeigt werden.</p>
+            </div>
+        </div>
+    </div>
     <script src="funktionen.js"></script>
 </body>
 </html>
